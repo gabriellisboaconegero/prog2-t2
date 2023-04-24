@@ -16,6 +16,14 @@
             fprintf(stderr, "\t%s -d -i MensagemCodificada -b LivroCifra -o MensagemDecodificada\n", argv[0]);\
             exit(1);}
 
+int file_exist(char *filename){
+    FILE *fd = fopen(filename, "r");
+    int exist = fd != NULL;
+    if (exist)
+        fclose(fd);
+
+    return exist;
+}
 
 int main(int argc, char **argv){
     int flag_codifica = 0, flag_decodifica = 0;
@@ -59,9 +67,14 @@ int main(int argc, char **argv){
     }else if (flag_decodifica && !((arq_chaves_name == NULL) ^ (livro_c_name == NULL))){
         fprintf(stderr, "Esta faltando o arquivo de chaves ou o livro de cifras, ou ambos foram colocados.\n");
         USAGE;
+    }else if (flag_codifica && file_exist(arq_chaves_name)){    // Verificar se o arquivo e existe e não escrever nele apenas se for codificar
+        fprintf(stderr, "[ERRO]: O arquivo para a saida de chaves [%s], ja existe\n", arq_chaves_name);
+        USAGE;
+    }else if (file_exist(arq_saida_name)){
+        fprintf(stderr, "[ERRO]: O arquivo de saida para a codificaca/decodificao [%s], ja existe\n", arq_saida_name);
+        USAGE;
     }
 
-    //TODO: nao criar os arquivos caso tenha dado erro anteriormente
 
     // Caso esteja codificando (flag -e)
     if (flag_codifica){

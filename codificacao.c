@@ -4,10 +4,11 @@
 #include <ctype.h>
 #include "lista.h"
 #include "codificacao.h"
+#include "chave.h"
 
 void codifica_msg(chave_t *ch, char *msg_original_name, char *arq_saida_name){
     char c;
-    FILE *msg_codificada = openw_ifn_exist(arq_saida_name);
+    FILE *msg_codificada = fopen(arq_saida_name, "w");
     if (msg_codificada == NULL){
         fprintf(stderr, "[ERRO]: Nao foi possivel abrir o arquivo de saida da mensagem a ser codififcada\n");
         exit(1);
@@ -47,7 +48,7 @@ void decodifica_msg(chave_t *chaves, char *msg_codi_name, char *msg_decodi_name)
     int valor = 0;
     chave_t *aux;
     lista_n_t *valor_achado;
-    FILE *msg_decodificada = openw_ifn_exist(msg_decodi_name);
+    FILE *msg_decodificada = fopen(msg_decodi_name, "w");
     if (msg_decodificada == NULL){
         fprintf(stderr, "[ERRO]: Nao foi possivel abrir o arquivo de saida da mensagem a ser decodififcada\n");
         exit(1);

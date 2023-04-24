@@ -1,0 +1,82 @@
+GRR20221255: Gabriel Lisboa Conegero
+
+# Modulos criados
+
+----- Lista ------
+## Arquivos criados: lista.c lista.h
+
+## Implementacao: Implementa uma lista ligada de inteiros usada para armazenar a lista de listas
+que codifica/decodifica a menssagem. Em conjunto com o modulo Chave, esse modulo implementa
+a lista de numeros que um certo caractere pode ser
+
+Exemplo:
+Considerando esse arquivo de chaves.
+
+arq_chaves.txt:
+"""
+a: 14 12 8 3 2
+b: 13 6 5
+c: 11 7 1
+d: 10 9 0
+"""
+
+O modulo lista implementa as listas ligadas para armazenar os dados numericos, que nesse caso
+ficariam:
+14 -> 12 -> 8 -> 3 -> 2 -> NULL
+13 -> 6 -> 5 -> NULL
+11 -> 7 -> 1 -> NULL
+10 -> 9 -> 0 -> NULL
+
+E depois usando o modulo chaves seriam colocadas em suas respectivas letras.
+
+## Strutura de dados: Foi usada uma lista ligada da forma
+
+struct lista_n_t {
+    int value;
+    struct lista_n_t *prox;
+};
+
+Foram usados dois algoritmos de inserção diferentes: insere_lista e insere_lista_fim.
+
+Foi feito dessa forma pois o insere_lista eh usado para a codificacao da menssagem, pois como
+o indice vai sendo pego na ordem inversa durante a geracao das chaves usando o livro cifra entao
+eles ja sao inseridos ordenados na ordem inversa. Porem na decodificacao da messagem, usando o arquivo
+de chaves, se eles fossem pegos na sequencia que aparecem e inseridos no inicio entao os valores
+ficariam ardenados da forma correta (menor para maior). Para que o algoritmo de busca, que assume
+que a lista esta na ordem inversa, funcione foi necessario inserir no final da lista para que os valores
+fiquem na ordem inversa. Poderia ter usado um algoritmo de insercao que ordena na ordem inversa, porem 
+seria mais custoso, pois ele deve procurar onde o elemento deve ir e entao o inserir.
+
+Os algoritmos lista_get e lista_find, usam a busca sequencial para pegar o membro indicado pelo index na
+lista e o membro indicado pelo valor respectivamente.
+----- Lista ------
+
+----- Chave ------
+## Arquivos criados: chave.c chave.h
+
+## Implementacao: Foram usados uma lista ligada de caracteres, que contem ponteiros para a lista de numeros
+que os respectivos caracteres podem assumir na decodificacao.
+
+arq_chaves.txt:
+"""
+a: 14 12 8 3 2
+b: 13 6 5
+c: 11 7 1
+d: 10 9 0
+"""
+
+O modulo chave implementa as listas ligadas para armazenar os dados da codificacao, que nesse caso
+ficariam:
+
+a -> 14 -> 12 -> 8 -> 3 -> 2 -> NULL
+|
+v
+b -> 13 -> 6 -> 5 -> NULL
+|
+v
+c -> 11 -> 7 -> 1 -> NULL
+|
+v
+d -> 10 -> 9 -> 0 -> NULL
+
+----- Chave ------

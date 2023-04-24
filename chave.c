@@ -5,19 +5,6 @@
 #include "lista.h"
 #include "chave.h"
 
-FILE *openw_ifn_exist(char *filename){
-    FILE *fd = fopen(filename, "r");
-    if (fd != NULL){
-        fprintf(stderr, "[ERRO]: Arquivo [%s] ja existe\n", filename);
-        fclose(fd);
-        exit(1);
-    }
-    fd = fopen(filename, "w");
-    if (fd == NULL)
-        fprintf(stderr, "[ERRO]: Nao foi possivel abrir o arquivo [%s]\n", filename);
-
-    return fd;
-}
 chave_t *inicia_chave(char c){
     chave_t *chave = malloc(sizeof(chave_t));
     if (chave == NULL)
@@ -144,9 +131,9 @@ chave_t *gera_lista_arq_chaves(chave_t *chave_head, char *arq_chaves_name){
 }
 
 void gera_arquivo_chaves(chave_t *ch, char *arq_chaves_name){
-    FILE *arq_chaves = openw_ifn_exist(arq_chaves_name);
+    FILE *arq_chaves = fopen(arq_chaves_name, "w");
     if (arq_chaves == NULL){
-        fprintf(stderr, "[ERRO]: Nao foi possivel abrir o arquivo de chaves\n");
+        fprintf(stderr, "[ERRO]: Nao foi possivel criar o arquivo de chaves\n");
         exit(1);
     }
 

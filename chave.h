@@ -12,7 +12,6 @@ typedef struct chave_t{
     struct lista_n_t *tail;
 }chave_t;
 
-FILE *openw_ifn_exist(char *filename);
 chave_t *inicia_chave(char c);
 chave_t *insere_chave(chave_t **ch, char c);
 chave_t *get_chave(chave_t *ch, char c);
