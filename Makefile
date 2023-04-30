@@ -1,5 +1,5 @@
 CFLAGS = -std=c99 -Wall
-O_FILES = beale.o lista.o chave.o codificacao.o
+O_FILES = beale.o lista.o chave.o codifica.o decodifica.o
 
 %.o: %.c %.h
 	gcc $(CFLAGS) -c $< -o $@
@@ -9,7 +9,7 @@ all: beale
 beale: $(O_FILES)
 	gcc $^ -o beale
 
-obeale.o: beale.c
+beale.o: beale.c
 	gcc $(CFLAGS) -c $< -o $@
 
 teste: teste.c

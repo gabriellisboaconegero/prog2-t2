@@ -5,78 +5,119 @@ GRR20221255: Gabriel Lisboa Conegero
 ----- Lista ------
 ## Arquivos criados: lista.c lista.h
 
-## Implementacao: Implementa uma lista ligada de inteiros usada para armazenar a lista de listas
-que codifica/decodifica a menssagem. Em conjunto com o modulo Chave, esse modulo implementa
-a lista de numeros que um certo caractere pode ser
+## Implementacao:
+Implementa uma lista ligada de inteiros usada para armazenar a lista de listas
+que codifica/decodifica a mensagem. Em conjunto com o modulo Chave,
+esse modulo implementa a lista de numeros que um certo caractere pode ser.
 
-Exemplo:
-Considerando esse arquivo de chaves.
-
-arq_chaves.txt:
-"""
-a: 14 12 8 3 2
-b: 13 6 5
-c: 11 7 1
-d: 10 9 0
-"""
-
-O modulo lista implementa as listas ligadas para armazenar os dados numericos, que nesse caso
-ficariam:
-14 -> 12 -> 8 -> 3 -> 2 -> NULL
-13 -> 6 -> 5 -> NULL
-11 -> 7 -> 1 -> NULL
-10 -> 9 -> 0 -> NULL
-
-E depois usando o modulo chaves seriam colocadas em suas respectivas letras.
-
-## Strutura de dados: Foi usada uma lista ligada da forma
+## Strutura de dados:
 
 struct lista_n_t {
     int value;
     struct lista_n_t *prox;
 };
 
-Foram usados dois algoritmos de inserção diferentes: insere_lista e insere_lista_fim.
+Foram usados dois algoritmos de inserção diferentes: insere_lista e 
+insere_lista_fim, sendo o primeiro usado quando a lista eh criada a partir do 
+livro cifra, onde basta inserir o novo numero no comeco, considerando que ele 
+sempre sera maior que o anterior. Contudo, quando feita a partir de um arquivo 
+de chaves, eh necessaria a insercao no fim, uma vez que os numeros sao lidos na 
+ordem inversa, do maior para o menor. Poderia ter sido implementado uma funcao 
+para inserir ordenado. Porem, devido as diversas comparacoes que seriam feitas, 
+o algoritmo ser ia mais custoso. Por outro lado, utilizando as duas funcoes 
+citadas anteriormente, ocorrem apenas trocas de ponteiros. 
 
-Foi feito dessa forma pois o insere_lista eh usado para a codificacao da menssagem, pois como
-o indice vai sendo pego na ordem inversa durante a geracao das chaves usando o livro cifra entao
-eles ja sao inseridos ordenados na ordem inversa. Porem na decodificacao da messagem, usando o arquivo
-de chaves, se eles fossem pegos na sequencia que aparecem e inseridos no inicio entao os valores
-ficariam ardenados da forma correta (menor para maior). Para que o algoritmo de busca, que assume
-que a lista esta na ordem inversa, funcione foi necessario inserir no final da lista para que os valores
-fiquem na ordem inversa. Poderia ter usado um algoritmo de insercao que ordena na ordem inversa, porem 
-seria mais custoso, pois ele deve procurar onde o elemento deve ir e entao o inserir.
+Os algoritmos lista_get e lista_find, usam a busca sequencial para pegar o 
+membro indicado pelo index na lista e o membro indicado pelo valor, 
+respectivamente. 
 
-Os algoritmos lista_get e lista_find, usam a busca sequencial para pegar o membro indicado pelo index na
-lista e o membro indicado pelo valor respectivamente.
+## Custos
+Insercao: custo constante
+Busca: custo linear
+
 ----- Lista ------
 
 ----- Chave ------
 ## Arquivos criados: chave.c chave.h
 
-## Implementacao: Foram usados uma lista ligada de caracteres, que contem ponteiros para a lista de numeros
-que os respectivos caracteres podem assumir na decodificacao.
+## Implementacao:
+Foi usada uma lista ligada de caracteres, que contem ponteiros para a lista 
+de numeros que os respectivos caracteres podem assumir na decodificacao.
 
-arq_chaves.txt:
-"""
-a: 14 12 8 3 2
-b: 13 6 5
-c: 11 7 1
-d: 10 9 0
-"""
+## Estrutura de dados:
 
-O modulo chave implementa as listas ligadas para armazenar os dados da codificacao, que nesse caso
-ficariam:
+struct chave_t{
+    int size;
+    char ch;
+    struct chave_t *prox;
+    struct lista_n_t *head;
+    struct lista_n_t *tail;
+};
 
-a -> 14 -> 12 -> 8 -> 3 -> 2 -> NULL
-|
-v
-b -> 13 -> 6 -> 5 -> NULL
-|
-v
-c -> 11 -> 7 -> 1 -> NULL
-|
-v
-d -> 10 -> 9 -> 0 -> NULL
+O ponteiro de tail eh utilizado pelo insere_lista_fim para inserir no final da 
+lista de numeros.
 
+Duas funcoes essenciais sao a insere_chave e get_chave. Primeiramente, a funcao 
+insere_chave busca o local de uma nova chave para então inseri-la. Foi 
+escolhido inserir em ordem visando otimizar a busca sequencial da funcao 
+get_chave, que retorna a chave do valor do caractere passado. 
+
+Os algoritmos gera_lista_livro e gera_lista_arq_chave sao usados para a 
+decodificacao.
+
+O algoritmo gera_lista_livro le palavra por palavra de um livro de cifra, 
+assumindo um tamnho maximo de 100 caracteres por palavra e a colocando em um 
+buffer. Em seguida, a funcao insere o primeiro caractere da palavra na lista de 
+chaves e, entao, o numero do contador de palavras na respectiva chave caso o 
+caractere seja valido, isto eh, ele pertence ao intervalo de caracteres 
+visiveis da tabela ascii [21 .. 126].
+
+O algoritmo gera_lista_arq_chave utiliza o arquivo de chaves gerado na etapa de 
+codificacao para criar as listas de chaves. Ele le palavra por palavra, e 
+verifica se ela possui o caractere ':'. Caso tenha, uma nova chave eh inserida 
+e uma variavel recebe essa chave, para que os valores numericos possam ser 
+inseridos nela. Caso a palavra nao contenha ':', ela eh transformada no valor 
+numerico usando sscanf(palavra, "%d", &num), e depois esse valor eh adicionado 
+na lista da variavel citada.
+
+## Custo
+Insercao: custo linear
+Busca: custo linear
 ----- Chave ------
+
+----- Codificacao ------
+
+## Arquivos criados: codificao.c codificao.h
+
+## Implementacao
+Foram criadas apenas duas funcoes: codifica_msg e descodifica_msg.
+
+A funcao codifica_msg pega caracter por caracter da mensagem original e procura 
+na lista de chaves o caracter a codificar. Apos isso um valor aleatorio eh 
+escolhido da lista de numeros. Esse eh o porquê de armazenar o tamanho da 
+lista de numeros, para que se possa escolher um index aleatorio que seja 
+valido. Apos escolher esse valor colcoa ele no arquivo da mensagem codificada.
+
+Caso os caracteres sejam ' ', '\n' ou nao seja achado o valor ('?'), sao 
+impresso os numeros de acordo com a tabela 1.
+
+A funcao decodifica_msg vai pegando numero por numero da mensagem codificada e 
+vai iterando na lista de chaves, chave por chave e verificando se o valor esta 
+naquela chave ou nao caso esteja imprime o caracter correspondente, caso nao 
+ache em nenhum caracter eh impresso '?'. Caso sejam valores especiais eh 
+impresso o caracter seguindo a tabela 1.
+
+## Tabela 1
+' '  = -1
+'\n' = -1
+'?'  = -3
+
+## Custo
+Codificar: tempo quadratico.
+Se considerando que para cada carcater tem que achar a chave e depois sortear 
+um numero.
+
+Decodificar: tempo quadratico.
+Pois para cada valor da mensagem codificada eh preciso procurar nas chaves se 
+elas possuem o valor.
+----- Codificacao ------

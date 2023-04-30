@@ -29,19 +29,26 @@ chave_t *insere_chave(chave_t **ch, char c){
         return *ch;
     }
     
+    // Para o caso de c ser menor que o primeiro valor das chaves
     if ((*ch)->ch > c){
         nova_chave = inicia_chave(c);
+        if (nova_chave == NULL){
+            fprintf(stderr, "[ERRO](modulo %s): Erro ao alocar memoria\n", __FILE__);
+            exit(1);
+        }
         nova_chave->prox = (*ch);
-        *ch =  nova_chave;
+        *ch = nova_chave;
 
         return nova_chave;
     }else if ((*ch)->ch == c)
         return *ch;
 
     aux2 = (*ch);
+    // itera ate achar um maior ou igual, ou chegar no final
     while (aux2->prox != NULL && aux2->prox->ch < c)
         aux2 = aux2->prox;
 
+    // Se chegou no final da lista
     if (aux2->prox == NULL){
         nova_chave = inicia_chave(c);
         aux2->prox = nova_chave;
@@ -49,6 +56,10 @@ chave_t *insere_chave(chave_t **ch, char c){
         return nova_chave;
     }else if (aux2->prox->ch != c){
         nova_chave = inicia_chave(c);
+        if (nova_chave == NULL){
+            fprintf(stderr, "[ERRO](modulo %s): Erro ao alocar memoria\n", __FILE__);
+            exit(1);
+        }
         nova_chave->prox = aux2->prox;
         aux2->prox = nova_chave;
 
@@ -59,8 +70,13 @@ chave_t *insere_chave(chave_t **ch, char c){
 }
 
 chave_t *get_chave(chave_t *ch, char c){
-    while (ch != NULL && ch->ch != c)
+    // itera ate achar uma chave com calor maior ou igual a c
+    while (ch != NULL && ch->ch < c)
         ch = ch->prox;
+
+    // Se nao achar ou chegar no final
+    if (ch == NULL || ch->ch != c)
+        return NULL;
 
     return ch;
 }
@@ -84,16 +100,26 @@ chave_t *gera_lista_livro(char *livro_c_name, chave_t *chave_head){
     chave_t *chave;
     FILE *livro_cifra = fopen(livro_c_name, "r");
     if (livro_cifra == NULL){
-        fprintf(stderr, "[ERRO]: Nao foi possivel abrir o arquivo [%s]\n", livro_c_name);
+        fprintf(stderr, "[ERRO](modulo %s): Nao foi possivel abrir o arquivo [%s]\n",
+                __FILE__, livro_c_name);
         exit(1);
     }
 
     char *palavra = malloc(sizeof(char) * MAX_WORD_SZ);
+    if (palavra == NULL){
+        fprintf(stderr, "[ERRO](modulo %s): Erro ao alocar memoria\n", __FILE__);
+        exit(1);
+    }
+    // Itera pegando palavra por palavra ate o final do arquivo
     while (fscanf(livro_cifra, "%s", palavra) != EOF){
         c = tolower(palavra[0]);
-        if (c >= ' ' && c <= '~'){      // Intervalo de caracteres ascii visiveis
+        // Intervalo de caracteres ascii visiveis
+        if (c >= ' ' && c <= '~'){
             chave = insere_chave(&chave_head, tolower(palavra[0]));
-            insere_lista(chave, j);
+            if (insere_lista(chave, j) == NULL){
+                fprintf(stderr, "[ERRO](modulo %s): Erro ao inserir valor na lista\n", __FILE__);
+                exit(1);
+            }
             j++;
         }
     }
@@ -111,17 +137,31 @@ chave_t *gera_lista_arq_chaves(chave_t *chave_head, char *arq_chaves_name){
 
     FILE *arq_chaves = fopen(arq_chaves_name, "r");
     if (arq_chaves == NULL){
-        fprintf(stderr, "[ERRO]: NAo foi possivel abrir o arquivo de chaves\n");
+        fprintf(stderr, "[ERRO](modulo %s): Nao foi possivel abrir o arquivo de chaves\n",
+                __FILE__);
         exit(1);
     }
 
+    // Primeira chave
     fscanf(arq_chaves, "%s", buffer);
     while (!feof(arq_chaves)){
+        // Pega o caracter da chave
         chave_c = buffer[0];
-        while (fscanf(arq_chaves, "%s", buffer) && buffer[1] != ':' && !feof(arq_chaves)){
+        // Cria chave e comeca a pegar os numeors ate achar uma
+        // nova chave no arquivo
+        chave = insere_chave(&chave_head, chave_c);
+        // Vai pegando letras ate achar algo da forma "%c:", isso quer
+        // dizer um novo inicio de chave. Entao atualizar a nova chave,
+        // inserindo ela na lista de lista
+        while (fscanf(arq_chaves, "%s", buffer) &&
+               buffer[1] != ':' &&
+               !feof(arq_chaves))
+        {
             sscanf(buffer, "%d", &num);
-            chave = insere_chave(&chave_head, chave_c);                 // quando for um espaco adiciona ele na lista e comeca a pegar o proximo num;
-            insere_lista_fim(chave, num);
+            if (insere_lista_fim(chave, num) == NULL){
+                fprintf(stderr, "[ERRO](modulo %s): Erro ao inserir valor na lista\n", __FILE__);
+                exit(1);
+            }
         }
     }
 
@@ -133,7 +173,8 @@ chave_t *gera_lista_arq_chaves(chave_t *chave_head, char *arq_chaves_name){
 void gera_arquivo_chaves(chave_t *ch, char *arq_chaves_name){
     FILE *arq_chaves = fopen(arq_chaves_name, "w");
     if (arq_chaves == NULL){
-        fprintf(stderr, "[ERRO]: Nao foi possivel criar o arquivo de chaves\n");
+        fprintf(stderr, "[ERRO](modulo %s): Nao foi possivel criar o arquivo de chaves\n",
+                __FILE__);
         exit(1);
     }
 

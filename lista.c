@@ -85,19 +85,26 @@ lista_n_t *lista_get(chave_t *chave, int index){
     if (chave == NULL)
         return NULL;
 
+    // garantir um index valido
     if (index >= chave->size)
         return NULL;
 
     aux = chave->head;
-    while (index-- > 0)
+    // Decrementando ate achar o nodo com valor do index
+    for (;index > 0; index--)
         aux = aux->prox;
 
     return aux;
 }
 
 lista_n_t *lista_find(lista_n_t *l, int valor){
-    while (l != NULL && l->value != valor)
+    // itera ate achar um nodo com valor menor ou igual ao valor
+    while (l != NULL && l->value > valor)
         l = l->prox;
+
+    // Se nao achar ou chegar no final
+    if (l == NULL || l->value != valor)
+        return NULL;
 
     return l;
 }

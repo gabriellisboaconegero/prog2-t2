@@ -7,7 +7,8 @@
 
 #include "lista.h"
 #include "chave.h"
-#include "codificacao.h"
+#include "codifica.h"
+#include "decodifica.h"
 
 #define USAGE { \
             fprintf(stderr, "Usage: \n");\
@@ -56,22 +57,29 @@ int main(int argc, char **argv){
 
     // Verificacao se as flags foram passadas corretamentes
     if (!(flag_codifica ^ flag_decodifica)){
-        fprintf(stderr, "Verifique se apenas uma das duas flags (-e ou -d) seja colocada\n");
+        fprintf(stderr, "[ERRO](modulo %s): Verifique se apenas uma das flags (-e ou -d) seja colocada\n", __FILE__);
         USAGE;
-    }else if (flag_codifica && (!livro_c_name || !msg_original_name || ! arq_saida_name)){
-        fprintf(stderr, "Esta faltando argumentos para a codificacao.\n");
+    }else if (flag_codifica &&
+            (!livro_c_name || !msg_original_name || ! arq_saida_name))
+    {
+        fprintf(stderr, "[ERRO](modulo %s): Esta faltando argumentos para a codificacao.\n", __FILE__);
         USAGE;
     }else if (flag_decodifica && (!msg_codi_name || !arq_saida_name)){
-        fprintf(stderr, "Esta faltando argumentos para a decodificacao\n");
+        fprintf(stderr, "[ERRO](modulo %s): Esta faltando argumentos para a decodificacao\n", __FILE__);
         USAGE;
-    }else if (flag_decodifica && !((arq_chaves_name == NULL) ^ (livro_c_name == NULL))){
-        fprintf(stderr, "Esta faltando o arquivo de chaves ou o livro de cifras, ou ambos foram colocados.\n");
+    }else if (flag_decodifica &&
+            !((arq_chaves_name == NULL) ^ (livro_c_name == NULL)))
+    {
+        fprintf(stderr, "[ERRO](modulo %s): Verifique se apenas um dos parametros (-b ou -c) foi colocado\n", __FILE__);
         USAGE;
-    }else if (flag_codifica && file_exist(arq_chaves_name)){    // Verificar se o arquivo e existe e não escrever nele apenas se for codificar
-        fprintf(stderr, "[ERRO]: O arquivo para a saida de chaves [%s], ja existe\n", arq_chaves_name);
+    }else if (flag_codifica && file_exist(arq_chaves_name)){    
+        // Verificar se o arquivo e existe e não escrever nele apenas se for codificar
+        fprintf(stderr, "[ERRO](modulo %s): O arquivo de saida para o arquivo de chaves [%s], ja existe\n", __FILE__,
+                arq_chaves_name);
         USAGE;
     }else if (file_exist(arq_saida_name)){
-        fprintf(stderr, "[ERRO]: O arquivo de saida para a codificaca/decodificao [%s], ja existe\n", arq_saida_name);
+        fprintf(stderr, "[ERRO](modulo %s): O arquivo de saida para a codificaca/decodificao [%s], ja existe\n", __FILE__,
+                arq_saida_name);
         USAGE;
     }
 
