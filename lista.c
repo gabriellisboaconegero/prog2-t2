@@ -50,18 +50,15 @@ lista_n_t *insere_lista_fim(chave_t *chave, int value){
 
     return nodo;
 }
-void print_lista(chave_t *chave, FILE *f){
-    lista_n_t *aux;
-
-    if (chave == NULL){
+void print_lista(lista_n_t *head, FILE *f){
+    if (head  == NULL){
         fprintf(f, "[NULL]\n");
         return;
     }
 
-    aux = chave->head;
-    while (aux != NULL){
-        fprintf(f, "%d ", aux->value);
-        aux = aux->prox;
+    while (head != NULL){
+        fprintf(f, "%d ", head->value);
+        head = head->prox;
     }
     fprintf(f, "\n");
 }

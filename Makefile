@@ -1,5 +1,5 @@
 CFLAGS = -std=c99 -Wall
-O_FILES = beale.o lista.o chave.o codifica.o decodifica.o
+O_FILES = beale.o lista.o chave.o codifica.o decodifica.o lista_chave.o
 
 %.o: %.c %.h
 	gcc $(CFLAGS) -c $< -o $@

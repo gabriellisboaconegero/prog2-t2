@@ -1,6 +1,5 @@
 #ifndef DECODIFICA_H_
 #define DECODIFICA_H_
-
 #include "chave.h"
 #define SPACE -1
 #define NEW_LINE -2

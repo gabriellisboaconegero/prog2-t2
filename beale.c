@@ -4,11 +4,11 @@
 #include <string.h>
 #include <ctype.h>
 #include <getopt.h>
-
 #include "lista.h"
 #include "chave.h"
 #include "codifica.h"
 #include "decodifica.h"
+#include "lista_chave.h"
 
 #define USAGE { \
             fprintf(stderr, "Usage: \n");\
